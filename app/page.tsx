@@ -637,6 +637,7 @@ export default function Home() {
                       <Line
                         type="monotone"
                         dataKey="reported"
+                        name="Reported"
                         stroke="#183f64"
                         strokeWidth={3}
                         dot={false}
@@ -644,6 +645,7 @@ export default function Home() {
                       <Line
                         type="monotone"
                         dataKey="closed"
+                        name="Close"
                         stroke="#c9822e"
                         strokeWidth={3}
                         dot={false}
@@ -687,23 +689,23 @@ export default function Home() {
               >
                 <div className="signals">
                   <Signal
-                    label="Reserve adequacy"
-                    value="Within tolerance"
+                    label="Reserve Adequacy"
+                    value="Within Tolerance"
                     text="Selected case reserves align with current incurred estimates."
                     good
                   />
                   <Signal
-                    label="Aging pressure"
-                    value={`${open.filter((c) => c.days > 90).length} priority files`}
+                    label="Aging Pressure"
+                    value={`${open.filter((c) => c.days > 90).length} Priority Files`}
                     text="Claims beyond 90 days require a documented action plan."
                   />
                   <Signal
-                    label="Fraud concentration"
-                    value={`${highFraud.length} elevated alerts`}
+                    label="Fraud Concentration"
+                    value={`${highFraud.length} Elevated Alerts`}
                     text="Behavioral and documentation indicators require validation."
                   />
                   <Signal
-                    label="Leakage opportunity"
+                    label="Leakage Opportunity"
                     value={money(totals.leakage)}
                     text="Estimated savings from recovery, reserve and vendor review."
                   />
