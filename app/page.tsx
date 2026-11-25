@@ -520,28 +520,46 @@ export default function Home() {
                   : "Triage & Leakage Review"}
             </h1>
           </div>
-          <label>
-            Portfolio
-            <select value={line} onChange={(e) => setLine(e.target.value)}>
-              <option>All Lines</option>
-              {lineOrder.map((x) => (
-                <option key={x}>{x}</option>
-              ))}
-            </select>
-          </label>
+          <div className="topbar-actions">
+            <span className="model-health">
+              <i />
+              5 Models Active
+            </span>
+            <label>
+              Portfolio
+              <select value={line} onChange={(e) => setLine(e.target.value)}>
+                <option>All Lines</option>
+                {lineOrder.map((x) => (
+                  <option key={x}>{x}</option>
+                ))}
+              </select>
+            </label>
+          </div>
         </header>
         {view === "dashboard" && (
           <>
             <section className="scope">
-              <div>
-                <BarChart3 />
+              <div className="scope-copy">
+                <span className="scope-icon">
+                  <BarChart3 />
+                </span>
                 <span>
-                  <b>Enterprise Claims View</b>
+                  <small>LIVE PORTFOLIO VIEW</small>
+                  <b>Enterprise Claims Operations</b>
+                  <em>
+                    {filtered.length} claims · {open.length} open · {highFraud.length} elevated fraud signals
+                  </em>
                 </span>
               </div>
-              <button onClick={() => setView("register")}>
-                Open Claims Register <ChevronRight />
-              </button>
+              <div className="scope-actions">
+                <span className="scope-live">
+                  <i />
+                  Intelligence Online
+                </span>
+                <button onClick={() => setView("register")}>
+                  Open Claims Register <ChevronRight />
+                </button>
+              </div>
             </section>
             <section className="metrics">
               <Metric
@@ -848,8 +866,13 @@ function Panel({
   return (
     <article className="panel">
       <header>
-        <p>{kicker}</p>
-        <h2>{title}</h2>
+        <div>
+          <p>{kicker}</p>
+          <h2>{title}</h2>
+        </div>
+        <span className="panel-mark" aria-hidden="true">
+          <Sparkles />
+        </span>
       </header>
       {children}
     </article>
