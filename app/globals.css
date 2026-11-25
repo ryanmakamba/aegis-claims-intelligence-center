@@ -162,3 +162,20 @@ tbody tr:hover{background:rgba(139,92,246,.04)}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+
+/* Final Claims mission-control contrast and interaction pass */
+.legend b,.signals b,.queue article>div:nth-child(2)>b,.risk-score b,.method h2,.method>div b{color:#eef3f9}
+.legend>div{border-bottom-color:rgba(255,255,255,.07)}
+.queue article{
+  transition:background var(--motion-fast) ease,border-color var(--motion-fast) ease;
+}
+.queue article:hover{background:rgba(139,92,246,.035);border-top-color:rgba(139,92,246,.14)}
+.queue article p{color:#c4b5fd}
+.method>p{color:#98a4b6}
+.method>div span{color:#c4b5fd}
+.sidebar button:focus-visible,.sidebar a:focus-visible,.scope button:focus-visible,
+.search input:focus-visible,.topbar select:focus-visible{
+  outline:2px solid #a78bfa;outline-offset:3px;
+}
+.scope button:hover{filter:brightness(1.08);transform:translateY(-1px)}
