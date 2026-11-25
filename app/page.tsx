@@ -446,7 +446,7 @@ export default function Home() {
     (name, i) => ({
       name,
       value: filtered.filter((c) => c.status === name).length,
-      color: ["#274f75", "#c9822e", "#a94f4b", "#438568"][i],
+      color: ["#8B5CF6", "#F59E0B", "#F97316", "#10B981"][i],
     }),
   );
   return (
@@ -603,19 +603,19 @@ export default function Home() {
                       <Bar
                         dataKey="incurred"
                         name="Incurred"
-                        fill="#183f64"
+                        fill="#8B5CF6"
                         radius={[5, 5, 0, 0]}
                       />
                       <Bar
                         dataKey="paid"
                         name="Paid"
-                        fill="#62a5a0"
+                        fill="#22D3EE"
                         radius={[5, 5, 0, 0]}
                       />
                       <Bar
                         dataKey="reserve"
                         name="Reserve"
-                        fill="#c9822e"
+                        fill="#F59E0B"
                         radius={[5, 5, 0, 0]}
                       />
                     </BarChart>
@@ -638,7 +638,7 @@ export default function Home() {
                         type="monotone"
                         dataKey="reported"
                         name="Reported"
-                        stroke="#183f64"
+                        stroke="#8B5CF6"
                         strokeWidth={3}
                         dot={false}
                       />
@@ -646,7 +646,7 @@ export default function Home() {
                         type="monotone"
                         dataKey="closed"
                         name="Close"
-                        stroke="#c9822e"
+                        stroke="#22D3EE"
                         strokeWidth={3}
                         dot={false}
                       />

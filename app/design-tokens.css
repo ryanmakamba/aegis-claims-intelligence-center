@@ -1,0 +1,43 @@
+:root{
+  color-scheme:dark;
+  --aegis-bg:#0a0e1a;
+  --aegis-surface:#111827;
+  --aegis-surface-elevated:#172033;
+  --aegis-border:rgba(255,255,255,.08);
+  --aegis-border-strong:rgba(255,255,255,.14);
+  --aegis-text:#e6eaf2;
+  --aegis-text-secondary:#8b95a8;
+  --aegis-underwriting:#22d3ee;
+  --aegis-claims:#8b5cf6;
+  --aegis-evidence:#f59e0b;
+  --risk-low:#10b981;
+  --risk-moderate:#f5c542;
+  --risk-high:#f97316;
+  --risk-severe:#ef4444;
+  --font-ui:var(--font-inter),Inter,ui-sans-serif,system-ui,sans-serif;
+  --font-heading:var(--font-space-grotesk),"Space Grotesk",var(--font-ui);
+  --motion-fast:160ms;
+  --motion-base:260ms;
+  --motion-slow:380ms;
+  --motion-ease:cubic-bezier(.22,1,.36,1);
+  --background:var(--aegis-bg);
+  --foreground:var(--aegis-text);
+  --card:var(--aegis-surface);
+  --card-foreground:var(--aegis-text);
+  --popover:var(--aegis-surface-elevated);
+  --popover-foreground:var(--aegis-text);
+  --primary:var(--aegis-claims);
+  --primary-foreground:#fff;
+  --secondary:var(--aegis-surface-elevated);
+  --secondary-foreground:var(--aegis-text);
+  --muted:rgba(255,255,255,.05);
+  --muted-foreground:var(--aegis-text-secondary);
+  --accent:rgba(139,92,246,.12);
+  --accent-foreground:#ddd6fe;
+  --destructive:var(--risk-severe);
+  --border:var(--aegis-border);
+  --input:var(--aegis-border-strong);
+  --ring:var(--aegis-claims);
+  --radius:.75rem;
+}
+:where(button,a,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--aegis-claims);outline-offset:3px}
