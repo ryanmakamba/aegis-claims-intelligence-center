@@ -4,6 +4,11 @@ import { useMemo, useState } from "react";
 import {
   AlertTriangle,
   BarChart3,
+  Building2,
+  Car,
+  House,
+  Warehouse,
+  UsersRound,
   CheckCircle2,
   ChevronRight,
   CircleDollarSign,
@@ -21,6 +26,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  Legend,
   Line,
   LineChart,
   Pie,
@@ -385,12 +391,12 @@ const monthly = [
   { month: "Aug", reported: 173, closed: 154 },
   { month: "Sep", reported: 151, closed: 147 },
 ];
-const lineOrder = [
-  "Auto",
-  "Home",
-  "Property",
-  "Liability",
-  "Workers' Compensation",
+const portfolios = [
+  { name: "Auto", icon: Car, color: "#60a5fa" },
+  { name: "Home", icon: House, color: "#2dd4bf" },
+  { name: "Property", icon: Warehouse, color: "#a78bfa" },
+  { name: "Liability", icon: Building2, color: "#fbbf24" },
+  { name: "Workers' Compensation", icon: UsersRound, color: "#fb7185" },
 ];
 const money = (value: number) =>
   new Intl.NumberFormat("en-US", {
@@ -412,11 +418,12 @@ export default function Home() {
       claims.filter(
         (c) =>
           (line === "All Lines" || c.line === line) &&
-          `${c.id} ${c.line} ${c.lossType} ${c.adjuster} ${c.status}`
-            .toLowerCase()
-            .includes(query.toLowerCase()),
+          (view !== "register" ||
+            `${c.id} ${c.line} ${c.lossType} ${c.adjuster} ${c.status}`
+              .toLowerCase()
+              .includes(query.toLowerCase())),
       ),
-    [line, query],
+    [line, query, view],
   );
   const totals = useMemo(
     () =>
@@ -433,9 +440,13 @@ export default function Home() {
   );
   const open = filtered.filter((c) => c.status !== "Settled"),
     highFraud = filtered.filter((c) => c.fraud >= 60);
-  const lineData = lineOrder.map((name) => {
+  const lineData = portfolios.map(({ name, icon, color }) => {
     const rows = claims.filter((c) => c.line === name);
     return {
+      portfolio: name,
+      icon,
+      color,
+      count: rows.length,
       name: name === "Workers' Compensation" ? "Workers' Comp" : name,
       incurred: rows.reduce((s, c) => s + c.incurred, 0),
       paid: rows.reduce((s, c) => s + c.paid, 0),
@@ -462,6 +473,7 @@ export default function Home() {
         <nav>
           <button
             className={view === "dashboard" ? "active" : ""}
+            aria-current={view === "dashboard" ? "page" : undefined}
             onClick={() => setView("dashboard")}
           >
             <LayoutDashboard />
@@ -469,6 +481,7 @@ export default function Home() {
           </button>
           <button
             className={view === "register" ? "active" : ""}
+            aria-current={view === "register" ? "page" : undefined}
             onClick={() => setView("register")}
           >
             <ClipboardList />
@@ -476,6 +489,7 @@ export default function Home() {
           </button>
           <button
             className={view === "triage" ? "active" : ""}
+            aria-current={view === "triage" ? "page" : undefined}
             onClick={() => setView("triage")}
           >
             <ShieldAlert />
@@ -529,8 +543,8 @@ export default function Home() {
               Portfolio
               <select value={line} onChange={(e) => setLine(e.target.value)}>
                 <option>All Lines</option>
-                {lineOrder.map((x) => (
-                  <option key={x}>{x}</option>
+                {portfolios.map(({ name }) => (
+                  <option key={name}>{name}</option>
                 ))}
               </select>
             </label>
@@ -545,23 +559,43 @@ export default function Home() {
                 </span>
                 <span>
                   <small>LIVE PORTFOLIO VIEW</small>
-                  <b>Enterprise Claims Operations</b>
+                  <b>{line === "All Lines" ? "Consolidated Claims Portfolio" : line}</b>
                   <em>
                     {filtered.length} claims · {open.length} open · {highFraud.length} elevated fraud signals
                   </em>
                 </span>
               </div>
               <div className="scope-actions">
-                <span className="scope-live">
-                  <i />
-                  Intelligence Online
-                </span>
                 <button onClick={() => setView("register")}>
                   Open Claims Register <ChevronRight />
                 </button>
               </div>
             </section>
-            <section className="metrics">
+            <section className="portfolio-grid" aria-label="Claims by line of business">
+              {lineData.map(({ portfolio, icon: Icon, color, count, incurred, reserve }) => {
+                const selected = line === portfolio;
+                return (
+                  <button
+                    key={portfolio}
+                    className="portfolio-card"
+                    style={{ borderTopColor: color }}
+                    aria-pressed={selected}
+                    onClick={() => setLine(selected ? "All Lines" : portfolio)}
+                  >
+                    <span className="portfolio-name">
+                      <Icon aria-hidden="true" style={{ color }} />
+                      {portfolio}
+                    </span>
+                    <span className="portfolio-financials">
+                      <span>Incurred<strong>{money(incurred)}</strong></span>
+                      <span>Reserve<strong>{money(reserve)}</strong></span>
+                    </span>
+                    <small>{count} claims</small>
+                  </button>
+                );
+              })}
+            </section>
+            <section className="metrics" aria-label="Claims performance indicators">
               <Metric
                 icon={<ClipboardList />}
                 label="Open Claims"
@@ -572,7 +606,7 @@ export default function Home() {
                 icon={<CircleDollarSign />}
                 label="Total Incurred"
                 value={money(totals.incurred)}
-                note={`${pct((totals.paid / totals.incurred) * 100)} paid to date`}
+                note={`${pct(totals.incurred ? (totals.paid / totals.incurred) * 100 : 0)} paid to date`}
               />
               <Metric
                 icon={<Gauge />}
@@ -595,7 +629,7 @@ export default function Home() {
                 tone="red"
               />
             </section>
-            <section className="charts">
+            <section className="charts" aria-label="Claims analytics">
               <Panel
                 kicker="FINANCIAL POSITION"
                 title="Incurred, Paid and Reserve by Line"
@@ -603,8 +637,8 @@ export default function Home() {
                 <div className="chart">
                   <ResponsiveContainer>
                     <BarChart
-                      data={lineData}
-                      margin={{ top: 20, right: 16, left: 16, bottom: 8 }}
+                      data={line === "All Lines" ? lineData : lineData.filter((item) => item.portfolio === line)}
+                      margin={{ top: 16, right: 8, left: 0, bottom: 8 }}
                     >
                       <CartesianGrid
                         vertical={false}
@@ -617,6 +651,7 @@ export default function Home() {
                         width={68}
                         tick={{ fontSize: 12 }}
                       />
+                      <Legend iconType="square" iconSize={8} />
                       <Tooltip formatter={(v) => money(Number(v || 0))} />
                       <Bar
                         dataKey="incurred"
@@ -640,38 +675,6 @@ export default function Home() {
                   </ResponsiveContainer>
                 </div>
               </Panel>
-              <Panel kicker="OPERATING FLOW" title="Reported versus Closed">
-                <div className="chart">
-                  <ResponsiveContainer>
-                    <LineChart data={monthly}>
-                      <CartesianGrid
-                        vertical={false}
-                        strokeDasharray="4 4"
-                        stroke="#d8e0e7"
-                      />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="reported"
-                        name="Reported"
-                        stroke="#8B5CF6"
-                        strokeWidth={3}
-                        dot={false}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="closed"
-                        name="Close"
-                        stroke="#22D3EE"
-                        strokeWidth={3}
-                        dot={false}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </Panel>
               <Panel kicker="CLAIM STATUS" title="Current Disposition">
                 <div className="donut">
                   <ResponsiveContainer>
@@ -690,6 +693,10 @@ export default function Home() {
                       <Tooltip />
                     </PieChart>
                   </ResponsiveContainer>
+                  <div className="donut-total" aria-hidden="true">
+                    <strong>{filtered.length}</strong>
+                    <span>Claims</span>
+                  </div>
                   <div className="legend">
                     {statusData.map((s) => (
                       <div key={s.name}>
@@ -699,6 +706,39 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
+                </div>
+              </Panel>
+              <Panel kicker="12-MONTH PORTFOLIO TREND · ALL LINES" title="Reported versus Closed">
+                <div className="chart">
+                  <ResponsiveContainer>
+                    <LineChart data={monthly}>
+                      <CartesianGrid
+                        vertical={false}
+                        strokeDasharray="4 4"
+                        stroke="#d8e0e7"
+                      />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Legend iconType="plainline" iconSize={14} />
+                      <Tooltip />
+                      <Line
+                        type="monotone"
+                        dataKey="reported"
+                        name="Reported"
+                        stroke="#8B5CF6"
+                        strokeWidth={3}
+                        dot={false}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="closed"
+                        name="Closed"
+                        stroke="#22D3EE"
+                        strokeWidth={3}
+                        dot={false}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </div>
               </Panel>
               <Panel
